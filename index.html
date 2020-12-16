@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fractal Flames</title>
+
+    <style>
+        body {
+            text-align: center;
+        }
+        .controls {
+            display: block;
+            margin-left: 30px;
+            margin-top: 15px;
+        }
+        #controlsWrapper {
+            display: inline-block;
+        }
+        #canvas {
+            display: inline-block;
+            width: 67.5vw;
+            height: 80vh;
+            margin-top: 15px;
+            border: 1px;
+            border-style: solid;
+        }
+        
+    </style>
+
+    <!-- libs -->
+</head>
+
+<body>
+    <h1>Fractal Flames</h1>
+    <canvas id="canvas"></canvas>
+
+    <div id = "controlsWrapper">
+        <div>
+            <input type="checkbox" id="linearCheckbox" checked> 
+            <label>Linear</label>
+        </div>
+
+        <button id="generateButton" class="controls">Generate</button>
+    </div>
+    
+    
+    <!-- code -->
+    <script src="./js/main.js"></script>
+</body>
+</html>
