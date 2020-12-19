@@ -19,11 +19,11 @@
         }
         #canvas {
             display: inline-block;
-            width: 67.5vw;
-            height: 80vh;
+           
             margin-top: 15px;
             border: 1px;
             border-style: solid;
+            background-color: black;
         }
         
     </style>
@@ -33,7 +33,7 @@
 
 <body>
     <h1>Fractal Flames</h1>
-    <canvas id="canvas"></canvas>
+    <canvas id="canvas" width='800' height='600'></canvas>
 
     <div id = "controlsWrapper">
         <div>
@@ -46,6 +46,7 @@
     
     
     <!-- code -->
+    <script src="./js/utils.js"></script>
     <script src="./js/main.js"></script>
 </body>
 </html>
