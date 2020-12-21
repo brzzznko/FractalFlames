@@ -6,20 +6,12 @@ var height = canvas.height;
 
 const affineCount = 10;
 const iterationsCount = 10000000;
-const gamma = 2.2;
+const gamma = 4;
 
 var histScale = 3;
 
-var frequencyHist = new Uint32Array(width * height * Math.pow(histScale, 2));
-for(let i = 0; i < frequencyHist.length; i++ ) {
-    frequencyHist[i] = 0;
-}
-
-var colorHist = new Uint8Array(width * height * Math.pow(histScale, 2) * 3);
-for(let i = 0; i < colorHist.length; i++ ) {
-    colorHist[i] = 0;
-}
-
+var frequencyHist;
+var colorHist;
 
 function F(x, y, coefA, coefB, coefC) {
     return coefA*x + coefB*y + coefC;
@@ -30,6 +22,16 @@ function generate() {
 
     const imageData = context.getImageData(0, 0, width, height);
     const data = imageData.data;
+
+    frequencyHist = new Uint32Array(width * height * Math.pow(histScale, 2));
+    for(let i = 0; i < frequencyHist.length; i++ ) {
+        frequencyHist[i] = 0;
+    }
+
+    colorHist = new Uint8Array(width * height * Math.pow(histScale, 2) * 3);
+    for(let i = 0; i < colorHist.length; i++ ) {
+        colorHist[i] = 0;
+    }
 
     // Generation affine functions
     var coefficients = [];
@@ -133,18 +135,18 @@ function getAverageCellColor(x, y) {
 
 function getAffinСoefficients(x, y) {
     return {
-      a: randomFloat(-1, 1),
-      b: randomFloat(-1, 1),
-      c: randomFloat(0, x),
-      d: randomFloat(-1, 1),
-      e: randomFloat(-1, 1),
-      f: randomFloat(0, y),
-      red: randomInt(0, 255),
-      green: randomInt(0, 255),
-      blue: randomInt(0, 255),
-      alpha: randomInt(0, 255),
+        a: randomFloat(-1, 1),
+        b: randomFloat(-1, 1),
+        c: randomFloat(0, x),
+        d: randomFloat(-1, 1),
+        e: randomFloat(-1, 1),
+        f: randomFloat(0, y),
+        red: randomInt(0, 255),
+        green: randomInt(0, 255),
+        blue: randomInt(0, 255),
+        alpha: randomInt(0, 255),
     };
-  }
+}
 
 function main() {
     // Adding listener to generate button
