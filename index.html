@@ -11,11 +11,14 @@
         }
         .controls {
             display: block;
-            margin-left: 30px;
+            text-align: left;
+            margin-left: 10px;
             margin-top: 15px;
         }
         #controlsWrapper {
             display: inline-block;
+            text-align: left;
+            margin-left: 30px;
         }
         #canvas {
             display: inline-block;
@@ -36,9 +39,15 @@
 
     <div id = "controlsWrapper">
         <div>
-            <input type="checkbox" id="linearCheckbox" checked> 
-            <label>Linear</label>
+            <label><input type="checkbox" id="linearCheckbox" value="Linear" checked> Linear</label>
         </div>
+        <div>
+            <label><input type="checkbox" id="sinusoidalCheckbox" value="Sinusoidal"> Sinusoidal</label>
+        </div>
+        <div>
+            <label><input type="checkbox" id="sphericalCheckbox" value="Spherical"> Spherical</label>
+        </div>
+        
 
         <button id="generateButton" class="controls">Generate</button>
     </div>
@@ -46,6 +55,7 @@
     
     <!-- code -->
     <script src="./js/utils.js"></script>
+    <script src="./js/variations.js"></script>
     <script src="./js/main.js"></script>
 </body>
 </html>

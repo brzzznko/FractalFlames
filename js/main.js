@@ -16,16 +16,21 @@ var histScale = 3;
 var frequencyHist;
 var colorHist;
 
-function F(x, y, coefA, coefB, coefC) {
-    return coefA*x + coefB*y + coefC;
+function applyAffine(x, y, coef) {
+    let newX = coef.a*x + coef.b*y + coef.c;
+    let newY = coef.d*x + coef.e*y + coef.f;
+
+    return [newX, newY];
 }
 
 function generate() {
+    // Clear canvas
     context.clearRect(0, 0, width, height);
 
     const imageData = context.getImageData(0, 0, width, height);
     const data = imageData.data;
 
+    // Clear frequency and Color Histograms
     frequencyHist = new Uint32Array(width * height * Math.pow(histScale, 2));
     for(let i = 0; i < frequencyHist.length; i++ ) {
         frequencyHist[i] = 0;
@@ -39,8 +44,12 @@ function generate() {
     // Generation affine functions
     var coefficients = [];
     for (let i = 0; i < affineCount; i++) {
-        coefficients.push(getAffinСoefficients(canvas.width, canvas.height));
+        coefficients.push(getAffinСoefficients(width, height));
     }
+
+    var final = coefficients[randomInt(0, affineCount - 1)];
+
+    var variationsList = getVariationsList()
 
     // Starting point selection
     var x = randomFloat(-1, 1);
@@ -57,27 +66,48 @@ function generate() {
         let coefficient = coefficients[randomInt(0, affineCount - 1)];
 
         // Aplying affine
-        x = F(x, y, coefficient.a, coefficient.b, coefficient.c);
-        y = F(x, y, coefficient.d, coefficient.e, coefficient.f);
+        var point = applyAffine(x, y, coefficient);
+        x = point[0];
+        y = point[1];
 
         // Calculate new color
         color.red = (color.red + coefficient.red) / 2;
         color.green = (color.green + coefficient.green) / 2;
         color.red = (color.blue + coefficient.blue) / 2;
-        color.alpha = (color.alpha + coefficient.alpha) / 2;
 
-        //TO-DO: variation
-        
+        // Aplying variations
+        point = applyVariations(variationsList, x, y);
+        x = point[0];
+        y = point[1];
+
+        // Aplying post transform
+        /*coefficient = coefficients[randomInt(0, affineCount - 1)];
+        point = applyAffine(x, y, coefficient);
+        x = point[0];
+        y = point[1];*/
+
+        // Aplying final
+        /*point = applyAffine(x, y, final);
+        x = point[0];
+        y = point[1];
+
+        color.red = (color.red + final.red) / 2;
+        color.green = (color.green + final.green) / 2;
+        color.red = (color.blue + final.blue) / 2;*/
+
+        var histX = Math.round((x + 2  * (width/height)) * (height * histScale / 4));
+        var histY = Math.round((y + 2) * (height * histScale / 4));
+
         if(i > 20) {
             // Updating frequency histogram
-            frequencyHist[(Math.floor(y) * width * histScale) + Math.floor(x)] += 10;
+            frequencyHist[(Math.floor(histY) * width * histScale) + Math.floor(histX)] += 10;
 
             // Updating color histogram
-            let index = (Math.floor(y) * width * histScale + Math.floor(x)) * 3;
+            let index = (Math.floor(histY) * width * histScale + Math.floor(histX)) * 3;
 
-            colorHist[index] = Math.floor((colorHist[index] + (color.red)) / 2);
-            colorHist[index + 1] = Math.floor((colorHist[index + 1] + (color.green)) / 2);
-            colorHist[index + 2] = Math.floor((colorHist[index + 2] + (color.blue)) / 2);
+            colorHist[index] = Math.floor((colorHist[index] + color.red) / 2);
+            colorHist[index + 1] = Math.floor((colorHist[index + 1] + color.green) / 2);
+            colorHist[index + 2] = Math.floor((colorHist[index + 2] + color.blue) / 2);
         }
     }
 
@@ -140,15 +170,41 @@ function getAffinСoefficients(x, y) {
     return {
         a: randomFloat(-1, 1),
         b: randomFloat(-1, 1),
-        c: randomFloat(0, x),
+        c: randomFloat(0, 1),
         d: randomFloat(-1, 1),
         e: randomFloat(-1, 1),
-        f: randomFloat(0, y),
+        f: randomFloat(0, 1),
         red: randomInt(0, 255),
         green: randomInt(0, 255),
         blue: randomInt(0, 255),
-        alpha: randomInt(0, 255),
     };
+}
+
+function getVariationsList() {
+    var list = [];
+
+    // Get all checked checkboxes
+    var markedCheckbox = document.querySelectorAll('input[type="checkbox"]:checked');  
+    for (var checkbox of markedCheckbox) {  
+        // Add variation function in list
+        list.push(variations[checkbox.value]);  
+    } 
+
+    return list;
+}
+
+function applyVariations(variationsList, x, y) {
+    let newX = 0;
+    let newY = 0;
+    
+    for (var func of variationsList) {
+        var point = func(x, y);
+
+        newX += point[0];
+        newY += point[1];
+    }
+
+    return [newX, newY];
 }
 
 function main() {
