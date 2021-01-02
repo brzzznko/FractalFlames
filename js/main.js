@@ -30,6 +30,9 @@ function generate() {
     const imageData = context.getImageData(0, 0, width, height);
     const data = imageData.data;
 
+    let postTransformIsNeeded = document.getElementById("postCheckbox").checked;
+    let finalIsNeeded = document.getElementById("finalCheckbox").checked;
+
     // Clear frequency and Color Histograms
     frequencyHist = new Uint32Array(width * height * Math.pow(histScale, 2));
     for(let i = 0; i < frequencyHist.length; i++ ) {
@@ -44,11 +47,11 @@ function generate() {
     // Generation affine functions
     var coefficients = [];
     for (let i = 0; i < affineCount; i++) {
-        coefficients.push(getAffinСoefficients(width, height));
+        coefficients.push(getAffinСoefficients());
     }
 
-    var final = coefficients[randomInt(0, affineCount - 1)];
-
+    var final = getAffinСoefficients();
+    
     var variationsList = getVariationsList()
 
     // Starting point selection
@@ -81,20 +84,28 @@ function generate() {
         y = point[1];
 
         // Aplying post transform
-        /*coefficient = coefficients[randomInt(0, affineCount - 1)];
-        point = applyAffine(x, y, coefficient);
-        x = point[0];
-        y = point[1];*/
+        if (postTransformIsNeeded) {
+            coefficient = coefficients[randomInt(0, affineCount - 1)];
+            point = applyAffine(x, y, coefficient);
+            x = point[0];
+            y = point[1];
 
+            color.red = (color.red + coefficient.red) / 2;
+            color.green = (color.green + coefficient.green) / 2;
+            color.red = (color.blue + coefficient.blue) / 2;
+        }
+        
         // Aplying final
-        /*point = applyAffine(x, y, final);
-        x = point[0];
-        y = point[1];
+        if (finalIsNeeded) {
+            point = applyAffine(x, y, final);
+            x = point[0];
+            y = point[1];
 
-        color.red = (color.red + final.red) / 2;
-        color.green = (color.green + final.green) / 2;
-        color.red = (color.blue + final.blue) / 2;*/
-
+            color.red = (color.red + final.red) / 2;
+            color.green = (color.green + final.green) / 2;
+            color.red = (color.blue + final.blue) / 2;
+        }
+        
         var histX = Math.round((x + 2  * (width/height)) * (height * histScale / 4));
         var histY = Math.round((y + 2) * (height * histScale / 4));
 
@@ -166,14 +177,14 @@ function getAverageCellColor(x, y) {
 }
 
 
-function getAffinСoefficients(x, y) {
+function getAffinСoefficients() {
     return {
         a: randomFloat(-1, 1),
         b: randomFloat(-1, 1),
-        c: randomFloat(0, 1),
+        c: randomFloat(-1, 1),
         d: randomFloat(-1, 1),
         e: randomFloat(-1, 1),
-        f: randomFloat(0, 1),
+        f: randomFloat(-1, 1),
         red: randomInt(0, 255),
         green: randomInt(0, 255),
         blue: randomInt(0, 255),
@@ -183,8 +194,8 @@ function getAffinСoefficients(x, y) {
 function getVariationsList() {
     var list = [];
 
-    // Get all checked checkboxes
-    var markedCheckbox = document.querySelectorAll('input[type="checkbox"]:checked');  
+    // Get all checked variation checkboxes
+    var markedCheckbox = document.querySelectorAll('input[class="variation"]:checked');  
     for (var checkbox of markedCheckbox) {  
         // Add variation function in list
         list.push(variations[checkbox.value]);  
