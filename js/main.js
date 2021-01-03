@@ -8,7 +8,7 @@ var width = canvas.width;
 var height = canvas.height;
 
 const affineCount = 10;
-const iterationsCount = 10000000;
+const iterationsCount = 7000000;
 const gamma = 4;
 
 var histScale = 3;
@@ -53,6 +53,7 @@ function generate() {
     var final = getAffinСoefficients();
     
     var variationsList = getVariationsList()
+    var weights = getVariationsWeights(variationsList.length);
 
     // Starting point selection
     var x = randomFloat(-1, 1);
@@ -79,7 +80,7 @@ function generate() {
         color.red = (color.blue + coefficient.blue) / 2;
 
         // Aplying variations
-        point = applyVariations(variationsList, x, y);
+        point = applyVariations(variationsList, weights, x, y);
         x = point[0];
         y = point[1];
 
@@ -204,15 +205,36 @@ function getVariationsList() {
     return list;
 }
 
-function applyVariations(variationsList, x, y) {
+function getVariationsWeights(variationsCount) {
+    if (variationsCount < 2)
+        return [1];
+
+    let weights = [];
+    for(let i = 0; i < variationsCount; i++) {
+        weights.push(0);
+    }
+    
+    let totalSum = 0;
+    let increment = 0.015;
+
+    while(totalSum < 1) {
+        weights[randomInt(0, variationsCount - 1)] += increment;
+        totalSum += increment;
+    }
+
+    console.log("weights: " + weights);
+    return weights;
+}
+
+function applyVariations(variationsList, weights, x, y) {
     let newX = 0;
     let newY = 0;
     
-    for (var func of variationsList) {
-        var point = func(x, y);
+    for (let i = 0; i < variationsList.length; i++) {
+        var point = variationsList[i](x, y);
 
-        newX += point[0];
-        newY += point[1];
+        newX += point[0] * weights[i];
+        newY += point[1] * weights[i];
     }
 
     return [newX, newY];
