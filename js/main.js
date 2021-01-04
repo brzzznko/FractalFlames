@@ -147,18 +147,18 @@ function generate() {
 
 function getMaxFrequency() {
     var maxFreq = 0;
-    for( var x = 0; x < width; x++ ) {
-        for( var y = 0; y < height; y++ ) {
+    for(var x = 0; x < width; x++) {
+        for(var y = 0; y < height; y++) {
             maxFreq = Math.max(maxFreq, getAveregeCellFrequency(x, y));
         }
     }
     return maxFreq;
 }
 
-function getAveregeCellFrequency( x, y ) {
+function getAveregeCellFrequency(x, y) {
     var sum = 0;
-    for( var hx = x * histScale; hx < x * histScale + histScale; hx++ ) {
-        for( var hy = y * histScale; hy < y * histScale + histScale; hy++ ) {
+    for(var hx = x * histScale; hx < x * histScale + histScale; hx++) {
+        for(var hy = y * histScale; hy < y * histScale + histScale; hy++) {
             sum += frequencyHist[(hy * width * histScale) + (hx)] || 0;
         }
     }
@@ -167,8 +167,8 @@ function getAveregeCellFrequency( x, y ) {
 
 function getAverageCellColor(x, y) {
     var sum = [0, 0, 0]; // r g b
-    for( var hx = x * (histScale * 3); hx < x * (histScale * 3) + (histScale * 3); hx += 3 ) {
-        for( var hy = y * histScale; hy < y * histScale + histScale; hy++ ) {
+    for(var hx = x * (histScale * 3); hx < x * (histScale * 3) + (histScale * 3); hx += 3) {
+        for(var hy = y * histScale; hy < y * histScale + histScale; hy++) {
             sum[0] += colorHist[ (hy * width * histScale * 3) + (hx) + 0] || 0;
             sum[1] += colorHist[ (hy * width * histScale * 3) + (hx) + 1] || 0;
             sum[2] += colorHist[ (hy * width * histScale * 3) + (hx) + 2] || 0;
